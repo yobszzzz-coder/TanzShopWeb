@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suntik Sosmed - TanzShop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #e6f2ff; min-height: 100vh; padding-bottom: 100px; }
+        
+        header { 
+            background: linear-gradient(135deg, #0099ff, #00ccff); 
+            padding: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 153, 255, 0.25); 
+            position: sticky; 
+            top: 0; 
+            z-index: 50; 
+        }
+        .back-btn { text-decoration: none; color: white; font-size: 20px; }
+        header h1 { font-size: 18px; font-weight: 700; color: white; }
+        
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .page-title h2 {
+            font-size: 22px;
+            color: #004777;
+            font-weight: 800;
+        }
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        
+        /* ✅ PILIHAN SOSMED — 3 Kotak Berurutan */
+        .sosmed-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .sosmed-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 12px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .sosmed-card:hover {
+            transform: translateY(-3px);
+            border-color: #0099ff;
+        }
+        .sosmed-card i {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .sosmed-card .tiktok i { color: #000; }
+        .sosmed-card .ig i { color: #E4405F; }
+        .sosmed-card .wa i { color: #25D366; }
+        .sosmed-card span {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* ✅ Tombol Hubungi Admin */
+        .contact-admin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+            margin-bottom: 30px;
+        }
+        .contact-admin-btn i { font-size: 18px; }
+        
+        /* ✅ DAFTAR LAYANAN */
+        .back-to-sosmed {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #0099ff;
+            background: rgba(0, 153, 255, 0.1);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .service-section {
+            display: none;
+        }
+        .service-section.active {
+            display: block;
+        }
+        
+        .service-header {
+            background: linear-gradient(135deg, #0099ff, #00ccff);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+        .service-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .service-header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .service-block {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .service-block h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .service-block h4 i { font-size: 18px; }
+        
+        .price-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .price-item {
+            background: #f0f9ff;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .price-item:hover {
+            border-color: #0099ff;
+            background: #e0f2fe;
+        }
+        .price-item .qty {
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+        .price-item .price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0099ff;
+        }
+        
+        /* ✅ MODAL PEMBAYARAN */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 380px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .qris-img {
+            width: 100%;
+            max-width: 280px;
+            display: block;
+            margin: 0 auto 12px auto;
+            border-radius: 8px;
+        }
+        .modal-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .selected-info {
+            background: #f0f9ff;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+        .selected-info p {
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .selected-info p:last-child { margin-bottom: 0; }
+        .selected-info strong { color: #0099ff; }
+        
+        .link-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .link-input:focus {
+            outline: none;
+            border-color: #0099ff;
+        }
+        
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area .placeholder-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .upload-area.has-image .placeholder-text { display: none; }
+        .upload-preview {
+            width: 100%;
+            height: auto;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 6px;
+            display: none;
+        }
+        .upload-area.has-image .upload-preview { display: block; }
+        
+        .confirm-btn {
+            width: 100%;
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .confirm-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        .hidden { display: none !important; }
+        
+        /* Latar belakang gelap transparan */
+ .custom-alert-overlay {
+     position: fixed;
+     inset: 0;
+     background: rgba(0, 0, 0, 0.55);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 99999;
+     opacity: 0;
+     visibility: hidden;
+     transition: all 0.25s ease;
+     padding: 20px;
+ }
+ .custom-alert-overlay.active {
+     opacity: 1;
+     visibility: visible;
+ }
+ /* Kotak Alert */
+ .custom-alert-box {
+     background: white;
+     border-radius: 16px;
+     padding: 28px 24px 24px;
+     max-width: 340px;
+     width: 100%;
+     text-align: center;
+     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+     transform: scale(0.9);
+     transition: transform 0.25s ease;
+ }
+ .custom-alert-overlay.active .custom-alert-box {
+     transform: scale(1);
+ }
+ /* Ikon */
+ .custom-alert-icon {
+     font-size: 48px;
+     color: #0099ff;
+     margin-bottom: 16px;
+ }
+ .custom-alert-box.success .custom-alert-icon { color: #22c55e; }
+ .custom-alert-box.error .custom-alert-icon { color: #ef4444; }
+ .custom-alert-box.warning .custom-alert-icon { color: #f59e0b; }
+ /* Teks */
+ .custom-alert-text {
+     font-size: 15px;
+     color: #374151;
+     line-height: 1.6;
+     margin-bottom: 22px;
+     font-weight: 500;
+ }
+ /* Tombol */
+ .custom-alert-btn {
+     background: linear-gradient(135deg, #0099ff, #00ccff);
+     color: white;
+     border: none;
+     padding: 12px 32px;
+     border-radius: 10px;
+     font-size: 15px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: transform 0.2s;
+ }
+ .custom-alert-btn:active {
+     transform: scale(0.96);
+ }
+ .custom-alert-box.success .custom-alert-btn {
+     background: linear-gradient(135deg, #22c55e, #16a34a);
+ }
+ .custom-alert-box.error .custom-alert-btn {
+     background: linear-gradient(135deg, #ef4444, #dc2626);
+ }
+ 
+ header {
+   background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+   padding: 20px;
+   position: relative;
+   border-radius: 0 0 16px 16px;
+ }
+ .back-btn {
+   color: white;
+   font-size: 18px;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   margin-bottom: 12px;
+ }
+ .header-subtitle {
+   color: rgba(255, 255, 255, 0.85);
+   font-size: 13px;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   margin-bottom: 4px;
+ }
+ header h1 {
+   color: white;
+   font-size: 26px;
+   font-weight: 900;
+   margin: 0 0 6px 0;
+ }
+ .header-desc {
+   color: rgba(255, 255, 255, 0.8);
+   font-size: 14px;
+   margin: 0;
+ }
+ 
+.btn-hubungi-wa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff !important;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    transition: 0.2s ease;
+}
+
+.btn-hubungi-wa:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
+}
+
+.btn-hubungi-wa svg {
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+}
+
+/* ===== ANIMASI SEMUA TOMBOL ===== */
+button,
+.btn,
+a.button,
+[type="button"],
+[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease !important;
+    transform-origin: center;
+}
+
+/* Hover: sedikit naik & lebih terang */
+button:hover,
+.btn:hover,
+a.button:hover,
+[type="button"]:hover,
+[type="submit"]:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Klik: ditekan */
+button:active,
+.btn:active,
+a.button:active,
+[type="button"]:active,
+[type="submit"]:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Efek gelombang saat diklik */
+button::after,
+.btn::after,
+a.button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+button:active::after,
+.btn:active::after,
+a.button:active::after {
+    animation: ripple 0.4s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0.6;
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+    }
+}
+
+ /* Animasi Fade In Halaman */
+body {
+    opacity: 0;
+    animation: pageFadeIn 0.5s ease forwards;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cegah pemilihan teks */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Cegah gambar diseret/diklik */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Sembunyikan tampilan URL di pojok kiri bawah */
+a {
+  text-decoration: none;
+}
+
+/* Opsional: Hilangkan efek hover jika perlu */
+a:hover {
+  color: inherit;
+}
+
+/* Hilangkan sorotan biru saat diklik/ditekan */
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* Opsional: cegah teks terseleksi saat diklik */
+button, a {
+  user-select: none;
+}
+
+
+    </style>
+</head>
+<body>
+    <!-- Elemen Alert -->
+ <div id="customAlertOverlay" class="custom-alert-overlay" onclick="closeCustomAlertOnOverlay(event)">
+     <div id="customAlertBox" class="custom-alert-box" onclick="event.stopPropagation()">
+         <div id="customAlertIcon" class="custom-alert-icon">
+             <i class="fa-solid fa-circle-info"></i>
+         </div>
+         <p id="customAlertMessage" class="custom-alert-text"></p>
+         <button class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
+     </div>
+ </div>
+
+<header>
+   <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+   <div class="header-content">
+  <p style="font-size: 12px; font-weight: 800; color: #3b82f6; background: #dbeafe; padding: 4px 12px; border-radius: 9999px; display: inline-block; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+         SUNTIK SOSMED
+    </p>
+     <h1>SUNTIK SOSMED</h1>
+     <p class="header-desc">Pilih Layanan Suntik Sosmed Yang Kamu Butuhkan.</p>
+   </div>
+ </header>
+
+<div class="container">
+    <!-- ✅ HALAMAN PILIHAN SOSMED -->
+    <div id="sosmed-choice">
+        <div class="page-title">
+            <h2>Pilih Platform Sosmed</h2>
+            <p>Pilih layanan yang kamu butuhkan</p>
+        </div>
+        
+        <div class="sosmed-grid">
+            <div class="sosmed-card" onclick="showService('tiktok')">
+                <span class="tiktok"><i class="fa-brands fa-tiktok"></i></span>
+                <span>Tiktok</span>
+            </div>
+            <div class="sosmed-card" onclick="showService('instagram')">
+                <span class="ig"><i class="fa-brands fa-instagram"></i></span>
+                <span>Instagram</span>
+            </div>
+            <div class="sosmed-card" onclick="showService('whatsapp')">
+                <span class="wa"><i class="fa-brands fa-whatsapp"></i></span>
+                <span>WhatsApp</span>
+            </div>
+        </div>
+        
+        <a href="https://wa.me/6288231341895" target="_blank" class="contact-admin-btn">
+            <i class="fa-solid fa-headset"></i>
+            Mau Suntik Sosmed Yang Lain? Hubungi Admin (TanzShop)
+        </a>
+    </div>
+
+    <!-- ✅ LAYANAN TIKTOK -->
+    <div id="tiktok-service" class="service-section">
+        <button class="back-to-sosmed" onclick="backToSosmed()">
+            <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+        
+        <div class="service-header">
+            <h3><i class="fa-brands fa-tiktok"></i> TIKTOK</h3>
+            <p>Pilih paket di bawah ini</p>
+        </div>
+        
+        <div class="service-block">
+            <h4><i class="fa-solid fa-user"></i> Followers Tiktok</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 100, 'Rp5.000')"><div class="qty">100</div><div class="price">Rp5.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 200, 'Rp10.000')"><div class="qty">200</div><div class="price">Rp10.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 300, 'Rp15.000')"><div class="qty">300</div><div class="price">Rp15.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 400, 'Rp20.000')"><div class="qty">400</div><div class="price">Rp20.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 500, 'Rp25.000')"><div class="qty">500</div><div class="price">Rp25.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 600, 'Rp30.000')"><div class="qty">600</div><div class="price">Rp30.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 700, 'Rp35.000')"><div class="qty">700</div><div class="price">Rp35.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 800, 'Rp40.000')"><div class="qty">800</div><div class="price">Rp40.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 900, 'Rp45.000')"><div class="qty">900</div><div class="price">Rp45.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Followers', 1000, 'Rp50.000')"><div class="qty">1.000</div><div class="price">Rp50.000</div></div>
+            </div>
+        </div>
+
+        <div class="service-block">
+            <h4><i class="fa-solid fa-heart"></i> Like Tiktok</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Like', 200, 'Rp2.000')"><div class="qty">200</div><div class="price">Rp2.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Like', 500, 'Rp4.000')"><div class="qty">500</div><div class="price">Rp4.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Like', 800, 'Rp6.000')"><div class="qty">800</div><div class="price">Rp6.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Like', 900, 'Rp7.000')"><div class="qty">900</div><div class="price">Rp7.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Like', 1000, 'Rp8.000')"><div class="qty">1.000</div><div class="price">Rp8.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'Like', 2000, 'Rp10.000')"><div class="qty">2.000</div><div class="price">Rp10.000</div></div>
+            </div>
+        </div>
+        
+        <div class="service-block">
+            <h4><i class="fa-solid fa-eye"></i> View Tiktok</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 5000, 'Rp2.000')"><div class="qty">5.000</div><div class="price">Rp2.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 7500, 'Rp3.000')"><div class="qty">7.500</div><div class="price">Rp3.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 10000, 'Rp4.000')"><div class="qty">10.000</div><div class="price">Rp4.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 13000, 'Rp5.000')"><div class="qty">13.000</div><div class="price">Rp5.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 19000, 'Rp6.000')"><div class="qty">19.000</div><div class="price">Rp6.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 23000, 'Rp8.000')"><div class="qty">23.000</div><div class="price">Rp8.000</div></div>
+                <div class="price-item" onclick="selectPackage('Tiktok', 'View', 30000, 'Rp10.000')"><div class="qty">30.000</div><div class="price">Rp10.000</div></div>
+            </div>
+        </div>
+<div style="text-align: center;">
+    <a href="https://wa.me/6288231341895" target="_blank" class="btn-hubungi-wa">
+        <svg viewBox="0 0 24 24">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.12.35.03.74-.24 1.02l-2.2 2.2z"/>
+        </svg>
+        Mau Jumlah Suntik Lain? Hubungi Admin!
+    </a>
+</div>
+
+
+    </div>
+
+    <!-- ✅ LAYANAN INSTAGRAM -->
+    <div id="instagram-service" class="service-section">
+        <button class="back-to-sosmed" onclick="backToSosmed()">
+            <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+        
+        <div class="service-header">
+            <h3><i class="fa-brands fa-instagram"></i> INSTAGRAM</h3>
+            <p>Pilih paket di bawah ini</p>
+        </div>
+        
+        <div class="service-block">
+            <h4><i class="fa-solid fa-user"></i> Followers Instagram</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 100, 'Rp5.000')"><div class="qty">100</div><div class="price">Rp5.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 200, 'Rp10.000')"><div class="qty">200</div><div class="price">Rp10.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 300, 'Rp14.000')"><div class="qty">300</div><div class="price">Rp14.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 400, 'Rp17.000')"><div class="qty">400</div><div class="price">Rp17.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 500, 'Rp19.000')"><div class="qty">500</div><div class="price">Rp19.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 800, 'Rp24.000')"><div class="qty">800</div><div class="price">Rp24.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Followers', 1000, 'Rp32.000')"><div class="qty">1.000</div><div class="price">Rp32.000</div></div>
+            </div>
+        </div>
+        
+        <div class="service-block">
+            <h4><i class="fa-solid fa-heart"></i> Like Instagram</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('Instagram', 'Like', 200, 'Rp2.000')"><div class="qty">200</div><div class="price">Rp2.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Like', 450, 'Rp4.000')"><div class="qty">450</div><div class="price">Rp4.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Like', 700, 'Rp6.000')"><div class="qty">700</div><div class="price">Rp6.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Like', 1000, 'Rp10.000')"><div class="qty">1.000</div><div class="price">Rp10.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'Like', 1500, 'Rp14.000')"><div class="qty">1.500</div><div class="price">Rp14.000</div></div>
+            </div>
+        </div>
+        
+        <div class="service-block">
+            <h4><i class="fa-solid fa-eye"></i> View Instagram</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('Instagram', 'View', 1000, 'Rp1.000')"><div class="qty">1.000</div><div class="price">Rp1.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'View', 1500, 'Rp2.000')"><div class="qty">1.500</div><div class="price">Rp2.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'View', 21000, 'Rp3.000')"><div class="qty">21.000</div><div class="price">Rp3.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'View', 27000, 'Rp4.000')"><div class="qty">27.000</div><div class="price">Rp4.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'View', 32000, 'Rp5.000')"><div class="qty">32.000</div><div class="price">Rp5.000</div></div>
+                <div class="price-item" onclick="selectPackage('Instagram', 'View', 40000, 'Rp6.000')"><div class="qty">40.000</div><div class="price">Rp6.000</div></div>
+            </div>
+        </div>
+        <div style="text-align: center;">
+    <a href="https://wa.me/6288231341895" target="_blank" class="btn-hubungi-wa">
+        <svg viewBox="0 0 24 24">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.12.35.03.74-.24 1.02l-2.2 2.2z"/>
+        </svg>
+        Mau Jumlah Suntik Lain? Hubungi Admin!
+    </a>
+</div>
+
+    </div>
+
+    <!-- ✅ LAYANAN WHATSAPP -->
+    <div id="whatsapp-service" class="service-section">
+        <button class="back-to-sosmed" onclick="backToSosmed()">
+            <i class="fa-solid fa-arrow-left"></i> Kembali
+        </button>
+        
+        <div class="service-header">
+            <h3><i class="fa-brands fa-whatsapp"></i> WHATSAPP</h3>
+            <p>Pilih paket di bawah ini</p>
+        </div>
+        
+        <div class="service-block">
+            <h4><i class="fa-solid fa-user"></i> Pengikut Saluran</h4>
+            <div class="price-list">
+                <div class="price-item" onclick="selectPackage('WhatsApp', 'Pengikut Saluran', 50, 'Rp3.000')"><div class="qty">50</div><div class="price">Rp3.000</div></div>
+                <div class="price-item" onclick="selectPackage('WhatsApp', 'Pengikut Saluran', 100, 'Rp6.000')"><div class="qty">100</div><div class="price">Rp6.000</div></div>
+                <div class="price-item" onclick="selectPackage('WhatsApp', 'Pengikut Saluran', 200, 'Rp10.000')"><div class="qty">200</div><div class="price">Rp10.000</div></div>
+                <div class="price-item" onclick="selectPackage('WhatsApp', 'Pengikut Saluran', 300, 'Rp15.000')"><div class="qty">300</div><div class="price">Rp15.000</div></div>
+                <div class="price-item" onclick="selectPackage('WhatsApp', 'Pengikut Saluran', 400, 'Rp20.000')"><div class="qty">400</div><div class="price">Rp20.000</div></div>
+                <div class="price-item" onclick="selectPackage('WhatsApp', 'Pengikut Saluran', 500, 'Rp25.000')"><div class="qty">500</div><div class="price">Rp25.000</div></div>
+            </div>
+        </div>
+        <div style="text-align: center;">
+    <a href="https://wa.me/6288231341895" target="_blank" class="btn-hubungi-wa">
+        <svg viewBox="0 0 24 24">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.12.35.03.74-.24 1.02l-2.2 2.2z"/>
+        </svg>
+        Mau Jumlah Suntik Lain? Hubungi Admin!
+    </a>
+</div>
+    </div>
+</div>
+
+<!-- ✅ MODAL PEMBAYARAN -->
+<div id="payment-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closePaymentModal()">&times;</button>
+        <h3 class="modal-title">💉 Suntik Sosmed - Pembayaran</h3>
+        
+        <img src="qris.jpg" alt="QRIS ALL PAYMENT" class="qris-img">
+        
+        <div class="selected-info">
+            <p><strong>Kategori:</strong> <span id="sel-category">-</span></p>
+            <p><strong>Layanan:</strong> <span id="sel-service">-</span></p>
+            <p><strong>Jumlah:</strong> <span id="sel-qty">-</span></p>
+            <p><strong>Harga:</strong> <span id="sel-price">-</span></p>
+        </div>
+        
+        <label style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px; display: block;">
+            💉 Link Akun/Video Yang Mau Di Suntik
+        </label>
+        <input type="text" id="link-input" class="link-input" placeholder="Tempel link akun/video kamu di sini...">
+        
+        <div class="upload-area" id="upload-click" onclick="document.getElementById('proof-input').click()">
+            <div class="placeholder-text">
+                <i class="fa-solid fa-cloud-upload-alt" style="font-size: 32px; color: #94a3b8;"></i>
+                <p style="color: #6b7280; margin-top: 8px;">Klik untuk upload bukti pembayaran</p>
+            </div>
+            <input type="file" id="proof-input" accept="image/*" style="display: none;" onchange="previewImage(event)">
+            <img id="proof-preview" class="upload-preview" src="" alt="Preview">
+        </div>
+        
+        <button id="confirm-btn" class="confirm-btn" disabled onclick="kirimKeAdmin()">
+            <i class="fa-solid fa-check-circle"></i> Konfirmasi
+        </button>
+    </div>
+</div>
+
+<script>
+// === KONFIGURASI SUPABASE ===
+ const SUPABASE_URL = "https://xgyotusufomqkugayxok.supabase.co";
+ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhneW90dXN1Zm9tcWt1Z2F5eG9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MTc0MjcsImV4cCI6MjEwOTM5MzQyN30.MFdTicnvGbANszdqbxzkiZZV6Ok0qbo02VJrf75P2ao";
+ // Inisialisasi Supabase Client
+ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+ 
+let selectedData = null;
+let selectedProofFile = null;
+const ADMIN_WA_NUMBER = "6288231341895";
+
+function showService(platform) {
+    document.getElementById('sosmed-choice').style.display = 'none';
+    document.getElementById(`${platform}-service`).classList.add('active');
+}
+
+function backToSosmed() {
+    document.querySelectorAll('.service-section').forEach(el => el.classList.remove('active'));
+    document.getElementById('sosmed-choice').style.display = 'block';
+}
+
+function selectPackage(category, service, qty, price) {
+    selectedData = { category, service, qty, price };
+    
+    document.getElementById('sel-category').textContent = category;
+    document.getElementById('sel-service').textContent = service;
+    document.getElementById('sel-qty').textContent = qty.toLocaleString('id-ID');
+    document.getElementById('sel-price').textContent = price;
+    
+    document.getElementById('payment-modal').classList.add('active');
+    document.getElementById('link-input').value = '';
+    selectedProofFile = null;
+    document.getElementById('proof-preview').style.display = 'none';
+    document.getElementById('upload-click').classList.remove('has-image');
+    document.getElementById('confirm-btn').disabled = true;
+    document.getElementById('proof-input').value = '';
+}
+
+function closePaymentModal() {
+    document.getElementById('payment-modal').classList.remove('active');
+    selectedData = null;
+    selectedProofFile = null;
+}
+
+function previewImage(event) {
+    const file = event.target.files[0];
+    const uploadArea = document.getElementById('upload-click');
+    const previewImg = document.getElementById('proof-preview');
+    
+    if (!file) {
+        selectedProofFile = null;
+        uploadArea.classList.remove('has-image');
+        previewImg.style.display = 'none';
+        document.getElementById('confirm-btn').disabled = true;
+        return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+        alert('Harap pilih file gambar saja!');
+        return;
+    }
+    
+    selectedProofFile = file;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        uploadArea.classList.add('has-image');
+        previewImg.style.display = 'block';
+        checkCanConfirm();
+    };
+    reader.readAsDataURL(file);
+}
+
+function checkCanConfirm() {
+    const link = document.getElementById('link-input').value.trim();
+    document.getElementById('confirm-btn').disabled = !(selectedProofFile && link);
+}
+
+document.getElementById('link-input').addEventListener('input', checkCanConfirm);
+
+async function kirimKeAdmin() {
+    const link = document.getElementById('link-input').value.trim();
+    
+    if (!link) {
+        alert('Silakan masukkan link akun/video terlebih dahulu!');
+        return;
+    }
+    
+    if (!selectedProofFile) {
+        alert('Silakan upload bukti pembayaran terlebih dahulu!');
+        return;
+    }
+    
+    if (!selectedData) {
+        alert('Pilih paket terlebih dahulu!');
+        return;
+    }
+
+    const statusLoading = document.getElementById('status-loading');
+    const statusSuccess = document.getElementById('status-success');
+    const confirmBtn = document.getElementById('confirm-btn');
+    
+    if (statusLoading) statusLoading.style.display = 'block';
+    if (statusSuccess) statusSuccess.style.display = 'none';
+    if (confirmBtn) confirmBtn.disabled = true;
+
+    try {
+        let buktiUrl = '';
+        
+        if (typeof sb !== 'undefined' && selectedProofFile) {
+            const fileName = 'bukti-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9) + '.jpg';
+            
+            const { data: uploadData, error: uploadError } = await sb.storage
+                .from('bukti-transfer')
+                .upload(fileName, selectedProofFile);
+            
+            if (!uploadError) {
+                const { data: { publicUrl } } = sb.storage
+                    .from('bukti-transfer')
+                    .getPublicUrl(fileName);
+                buktiUrl = publicUrl;
+            }
+        }
+
+        const now = new Date();
+        const tahun = now.getFullYear().toString();
+        const bulan = String(now.getMonth() + 1).padStart(2, '0');
+        const tanggal = String(now.getDate()).padStart(2, '0');
+        const jam = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        if (typeof sb !== 'undefined') {
+            const { data, error } = await sb
+                .from('transaksi')
+                .insert([{
+                    username: 'Pengguna',
+                    produk: `${selectedData.category} - ${selectedData.service}`,
+                    kualitas: selectedData.qty.toString(),
+                    link_akun: link,
+                    harga: selectedData.price,
+                    bukti_url: buktiUrl,
+                    status: 'menunggu',
+                    tahun: tahun,
+                    bulan: bulan,
+                    tanggal: tanggal,
+                    jam: jam
+                }])
+                .select();
+
+            if (error) {
+                console.error('Error:', error);
+                alert('Gagal menyimpan: ' + error.message);
+                if (confirmBtn) confirmBtn.disabled = false;
+                return;
+            }
+        }
+
+        if (statusLoading) statusLoading.style.display = 'none';
+        if (statusSuccess) statusSuccess.style.display = 'block';
+
+        const pesanWA = encodeURIComponent(
+`Halo Admin Tanz, Saya Sudah Bayar Untuk Suntik Sosmed:
+
+📦Kategori: ${selectedData.category}
+📞Layanan: ${selectedData.service}
+🔢Jumlah: ${selectedData.qty.toLocaleString('id-ID')}
+🔗Link Akun/Video: ${link}
+💰Total: ${selectedData.price}
+
+Bukti Transfer Sudah Saya Upload Di Web, Mohon Verifikasi Dan Kirimkan Produk Nya, Trimakasi!`
+        );
+
+        setTimeout(() => {
+            window.open(`https://wa.me/${ADMIN_WA_NUMBER}?text=${pesanWA}`, '_blank');
+            closePaymentModal();
+        }, 1500);
+
+    } catch (error) {
+        console.error('Error:', error);
+        if (statusLoading) statusLoading.style.display = 'none';
+        alert('Terjadi kesalahan! Coba lagi ya.');
+        if (confirmBtn) confirmBtn.disabled = false;
+    }
+}
+
+
+// ✅ FUNGSI UTAMA ALERT KUSTOM — GUNAKAN DI SEMUA HALAMAN
+ function showAlert(pesan, tipe = 'info') {
+     const overlay = document.getElementById('customAlertOverlay');
+     const box = document.getElementById('customAlertBox');
+     const msgEl = document.getElementById('customAlertMessage');
+     const iconEl = document.getElementById('customAlertIcon');
+     
+     if (!overlay || !box || !msgEl) return;
+     
+     // Reset kelas
+     box.classList.remove('success', 'error', 'warning');
+     
+     // Set tipe dan ikon
+     let iconHTML = '<i class="fa-solid fa-circle-info"></i>';
+     if (tipe === 'success') {
+         box.classList.add('success');
+         iconHTML = '<i class="fa-solid fa-circle-check"></i>';
+     } else if (tipe === 'error') {
+         box.classList.add('error');
+         iconHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+     } else if (tipe === 'warning') {
+         box.classList.add('warning');
+         iconHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+     }
+     iconEl.innerHTML = iconHTML;
+     
+     // Tampilkan pesan
+     msgEl.innerHTML = pesan;
+     
+     // Buka alert
+     overlay.classList.add('active');
+     document.body.style.overflow = 'hidden';
+ }
+ function closeCustomAlert() {
+     const overlay = document.getElementById('customAlertOverlay');
+     if (overlay) {
+         overlay.classList.remove('active');
+         document.body.style.overflow = '';
+     }
+ }
+ function closeCustomAlertOnOverlay(event) {
+     if (event.target.id === 'customAlertOverlay') {
+         closeCustomAlert();
+     }
+ }
+ // ✅ GANTI OTOMATIS alert() BAWAHAN JADI KUSTOM
+ window.alert = function(pesan) {
+     showAlert(pesan);
+ };
+</script>
+</body>
+</html>

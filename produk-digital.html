@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produk Digital - TanzShop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #e6f2ff; min-height: 100vh; padding-bottom: 40px; }
+        
+        header { 
+            background: linear-gradient(135deg, #0099ff, #00ccff); 
+            padding: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 153, 255, 0.25); 
+            position: sticky; 
+            top: 0; 
+            z-index: 50; 
+        }
+        .back-btn { text-decoration: none; color: white; font-size: 20px; }
+        header h1 { font-size: 18px; font-weight: 700; color: white; }
+        
+        .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 6px 16px rgba(0, 153, 255, 0.35);
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+        }
+        .product-card:active { transform: scale(0.97); }
+        
+     /* ✅ KARTU PRODUK — Foto Langsung Penuh Tanpa Kotak Putih */
+.product-image-wrapper {
+    background: transparent; /* ← Hilangkan latar belakang putih */
+    border-radius: 16px 16px 0 0; /* ← Sudut atas melengkung */
+    padding: 0; /* ← Hilangkan jarak dalam */
+    margin-bottom: 0; /* ← Hilangkan jarak bawah */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: auto;
+}
+.product-img {
+    width: 100%;
+    height: auto;
+    min-height: 160px;
+    object-fit: contain;
+    border-radius: 16px 16px 0 0; /* ← Sesuaikan lengkungan */
+    display: block;
+}
+
+
+        
+        .product-name {
+            font-size: 14px;
+            font-weight: 900;
+            color: black;
+            padding: 0 8px;
+            margin-bottom: 6px;
+            line-height: 1.9;
+        }
+        .product-price {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0099ff;
+            padding: 0 8px;
+            margin-bottom: 12px;
+        }
+        .detail-btn {
+            width: calc(100% - 16px);
+            margin: 0 8px;
+            background: #0099ff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .loading-state, .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+        }
+        .loading-state i, .empty-state i { font-size: 48px; color: #94a3b8; margin-bottom: 12px; }
+        
+        .detail-page-overlay {
+            position: fixed;
+            inset: 0;
+            background: #e6f2ff;
+            z-index: 200;
+            overflow-y: auto;
+            display: none;
+        }
+        .detail-page-overlay.active { display: block; }
+        
+       /* ✅ Sesuaikan Header Detail */
+.detail-page-header {
+    background: transparent; /* ← Bisa diubah sesuai keinginan */
+    padding: 0;
+    border-radius: 0;
+}
+
+     /* ✅ Tombol Kembali yang Terlihat Jelas */
+.detail-back-btn {
+    position: absolute !important;
+    top: 16px !important;
+    left: 16px !important;
+    z-index: 100 !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    color: white !important;
+    border: none !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+.detail-back-btn:hover {
+    background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.detail-page-header {
+    position: relative !important; /* ← Penting, agar tombol posisi benar di dalamnya */
+}
+
+/* ✅ HALAMAN DETAIL — Foto Penuh Tapi Bawah Lengkung */
+ .detail-page-image {
+     width: 100%;
+     max-width: none;
+     background: transparent;
+     border-radius: 0;
+     padding: 0;
+     box-shadow: none;
+ }
+ .detail-page-image img {
+     width: 100%;
+     height: auto;
+     max-height: none;
+     object-fit: contain;
+     border-radius: 0 0 44px 44px; /* ✅ Hanya bawah yang bundar */
+     display: block;
+ }
+
+        
+        .detail-page-content {
+            padding: 24px 20px 100px;
+        }
+        .detail-badge {
+            font-size: 14px;
+            color: #0099ff;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .detail-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #004777;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+        .detail-price {
+            font-size: 26px;
+            font-weight: 900;
+            color: #0099ff;
+            margin-bottom: 24px;
+        }
+        .detail-desc {
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 40px;
+            border: 2px solid rgba(0, 153, 255, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            background: #e6f2ff;
+        }
+        .order-now-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-width: 440px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #0099ff, #00ccff);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 153, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 300; padding: 20px; }
+        .modal-content { background: white; border-radius: 16px; max-width: 380px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; position: relative; }
+        .close-btn { position: absolute; top: 12px; right: 16px; font-size: 24px; background: none; border: none; cursor: pointer; color: #94a3b8; }
+        .qris-img { width: 100%; max-width: 280px; display: block; margin: 0 auto 12px auto; border-radius: 8px; }
+        
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area .placeholder-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .upload-area.has-image .placeholder-text { display: none; }
+        .upload-preview {
+            width: 100%;
+            height: auto;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 6px;
+            display: none;
+        }
+        .upload-area.has-image .upload-preview { display: block; }
+        
+        .confirm-btn { width: 100%; background: #22c55e; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        .confirm-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        
+        .hidden { display: none !important; }
+        
+                /* Latar belakang gelap transparan */
+ .custom-alert-overlay {
+     position: fixed;
+     inset: 0;
+     background: rgba(0, 0, 0, 0.55);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 99999;
+     opacity: 0;
+     visibility: hidden;
+     transition: all 0.25s ease;
+     padding: 20px;
+ }
+ .custom-alert-overlay.active {
+     opacity: 1;
+     visibility: visible;
+ }
+ /* Kotak Alert */
+ .custom-alert-box {
+     background: white;
+     border-radius: 16px;
+     padding: 28px 24px 24px;
+     max-width: 340px;
+     width: 100%;
+     text-align: center;
+     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+     transform: scale(0.9);
+     transition: transform 0.25s ease;
+ }
+ .custom-alert-overlay.active .custom-alert-box {
+     transform: scale(1);
+ }
+ /* Ikon */
+ .custom-alert-icon {
+     font-size: 48px;
+     color: #0099ff;
+     margin-bottom: 16px;
+ }
+ .custom-alert-box.success .custom-alert-icon { color: #22c55e; }
+ .custom-alert-box.error .custom-alert-icon { color: #ef4444; }
+ .custom-alert-box.warning .custom-alert-icon { color: #f59e0b; }
+ /* Teks */
+ .custom-alert-text {
+     font-size: 15px;
+     color: #374151;
+     line-height: 1.6;
+     margin-bottom: 22px;
+     font-weight: 500;
+ }
+ /* Tombol */
+ .custom-alert-btn {
+     background: linear-gradient(135deg, #0099ff, #00ccff);
+     color: white;
+     border: none;
+     padding: 12px 32px;
+     border-radius: 10px;
+     font-size: 15px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: transform 0.2s;
+ }
+ .custom-alert-btn:active {
+     transform: scale(0.96);
+ }
+ .custom-alert-box.success .custom-alert-btn {
+     background: linear-gradient(135deg, #22c55e, #16a34a);
+ }
+ .custom-alert-box.error .custom-alert-btn {
+     background: linear-gradient(135deg, #ef4444, #dc2626);
+ }
+ 
+header {
+   background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+   padding: 20px;
+   position: relative;
+   border-radius: 0 0 16px 16px;
+ }
+ .back-btn {
+   color: white;
+   font-size: 18px;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   margin-bottom: 12px;
+ }
+ .header-subtitle {
+   color: rgba(255, 255, 255, 0.85);
+   font-size: 13px;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   margin-bottom: 4px;
+ }
+ header h1 {
+   color: white;
+   font-size: 26px;
+   font-weight: 900;
+   margin: 0 0 6px 0;
+ }
+ .header-desc {
+   color: rgba(255, 255, 255, 0.8);
+   font-size: 14px;
+   margin: 0;
+ }
+ 
+/* ======================================
+   MODAL PEMBAYARAN QRIS - VERSI BERSIH
+   ====================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-overlay.hidden {
+  display: none !important;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 20px;
+  width: 90%;
+  max-width: 340px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 9999;
+  box-sizing: border-box;
+  text-align: center;
+  margin: 0;
+}
+
+/* Tombol Tutup */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 22px;
+  background: transparent;
+  border: none;
+  color: #888888;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+/* Judul */
+.payment-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #3b82f6;
+  margin: 0 0 4px 0;
+}
+
+.payment-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+/* Nama Produk & Harga */
+.product-name-box {
+  background: rgba(30, 64, 175, 0.65);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 12px;
+  backdrop-filter: blur(4px);
+}
+
+
+.product-price-qris {
+  font-size: 24px;
+  font-weight: 900;
+  color: #3b82f6;
+  margin: 0 0 20px 0;
+}
+
+/* QRIS */
+.qris-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.qris-label {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0 0 16px 0;
+}
+
+/* Kotak Instruksi */
+.instruksi-box {
+  background: #eff6ff;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: left;
+  margin-bottom: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.instruksi-box p {
+  font-size: 13px;
+  color: #1e3a8a;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
+.instruksi-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* Upload Area */
+.upload-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: left;
+  margin: 0 0 10px 0;
+}
+
+.upload-area {
+  border: 2px dashed #93c5fd;
+  border-radius: 8px;
+  padding: 20px;
+  background: #f8fbff;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+
+.upload-area:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.placeholder-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #6b7280;
+}
+
+.upload-preview {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.no-file {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: left;
+  margin: 0 0 16px 0;
+}
+
+/* Tombol Konfirmasi */
+.confirm-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s;
+}
+
+.confirm-btn:disabled {
+  background: #bfdbfe;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.confirm-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.confirm-btn i {
+  font-size: 18px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #1e40af;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+ /* Animasi Fade In Halaman */
+body {
+    opacity: 0;
+    animation: pageFadeIn 0.5s ease forwards;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== ANIMASI SEMUA TOMBOL ===== */
+button,
+.btn,
+a.button,
+[type="button"],
+[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease !important;
+    transform-origin: center;
+}
+
+/* Hover: sedikit naik & lebih terang */
+button:hover,
+.btn:hover,
+a.button:hover,
+[type="button"]:hover,
+[type="submit"]:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Klik: ditekan */
+button:active,
+.btn:active,
+a.button:active,
+[type="button"]:active,
+[type="submit"]:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Efek gelombang saat diklik */
+button::after,
+.btn::after,
+a.button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+button:active::after,
+.btn:active::after,
+a.button:active::after {
+    animation: ripple 0.4s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0.6;
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+    }
+}
+
+/* Cegah pemilihan teks */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Cegah gambar diseret/diklik */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Sembunyikan tampilan URL di pojok kiri bawah */
+a {
+  text-decoration: none;
+}
+
+/* Opsional: Hilangkan efek hover jika perlu */
+a:hover {
+  color: inherit;
+}
+
+/* Hilangkan sorotan biru saat diklik/ditekan */
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* Opsional: cegah teks terseleksi saat diklik */
+button, a {
+  user-select: none;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Elemen Alert -->
+ <div id="customAlertOverlay" class="custom-alert-overlay" onclick="closeCustomAlertOnOverlay(event)">
+     <div id="customAlertBox" class="custom-alert-box" onclick="event.stopPropagation()">
+         <div id="customAlertIcon" class="custom-alert-icon">
+             <i class="fa-solid fa-circle-info"></i>
+         </div>
+         <p id="customAlertMessage" class="custom-alert-text"></p>
+         <button class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
+     </div>
+ </div>
+
+
+<header>
+   <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+   <div class="header-content">
+  <p style="font-size: 12px; font-weight: 800; color: #3b82f6; background: #dbeafe; padding: 4px 12px; border-radius: 9999px; display: inline-block; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+        PRODUK DIGITAL
+    </p>
+     <h1>Produk Digital.</h1>
+     <p class="header-desc">Pilih Layanan Produk Digital Yang Kamu Butuhkan.</p>
+   </div>
+ </header>
+
+
+<div class="container">
+    <div class="products-grid" id="products-container">
+        <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Produk sedang dimuat...</p>
+        </div>
+    </div>
+</div>
+
+<div id="detail-page" class="detail-page-overlay">
+    <div class="detail-page-header">
+        <a href="javascript:void(0)" onclick="closeDetailModal()" class="detail-back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <div class="detail-page-image">
+            <img id="detail-img-full" src="" alt="">
+        </div>
+    </div>
+    <div class="detail-page-content">
+        <p class="detail-badge" id="detail-badge-text"> Produk Digital</p>
+        <h1 class="detail-title" id="detail-name-full"></h1>
+        <p class="detail-price" id="detail-price-full"></p>
+        <div class="detail-desc" id="detail-desc-full"></div>
+    </div>
+    <button class="order-now-btn" onclick="openPaymentModal()">
+        <i class="fa-solid fa-circle-check"></i> Pesan Sekarang
+    </button>
+</div>
+
+<!-- MODAL PEMBAYARAN QRIS -->
+<div id="payment-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closePaymentModal()">&times;</button>
+    
+    <h2 class="payment-title">Scan QRIS Pembayaran</h2>
+    <p class="payment-subtitle">Selesaikan pembayaran produk digital kamu</p>
+    
+    <div id="sel-product-name" class="product-name-box">Nama Produk</div>
+    <p id="sel-product-price" class="product-price-qris">Rp 0</p>
+    
+    
+    <img src="qris.jpg" alt="QRIS" class="qris-img">
+    <p class="qris-label">QRIS Resmi</p>
+    
+    
+    <div class="instruksi-box">
+      <p>1. Scan QRIS di atas sesuai nominal total</p>
+      <p>2. Upload foto bukti transfer pada form di bawah</p>
+      <p>3. Klik tombol konfirmasi untuk kirim bukti ke admin & ambil produk via WhatsApp.</p>
+    </div>
+    
+    <p class="upload-title">Upload Bukti Transfer <span style="color:red">(Wajib)</span></p>
+    
+    <div class="upload-area" id="upload-click" onclick="document.getElementById('proof-input').click()">
+      <div class="placeholder-text" id="placeholder-text">
+        <i class="fa-solid fa-cloud-upload-alt" style="font-size: 32px; color: #94a3b8;"></i>
+        <p style="margin: 8px 0 0 0;">Klik untuk pilih gambar</p>
+      </div>
+      <input type="file" id="proof-input" accept="image/*" style="display: none;" onchange="previewImage(event)">
+      <img id="proof-preview" class="upload-preview" src="" alt="Preview" style="display: none;">
+    </div>
+    <p id="no-file-text" class="no-file">Tidak ada file yang dipilih</p>
+    
+    <!-- Sebelum tombol konfirmasi -->
+<div id="status-loading" style="display: none; text-align: center; padding: 14px; background: #dbeafe; border-radius: 8px; margin-bottom: 12px;">
+  <span style="display: flex; align-items: center; justify-content: center; color: #1e40af; font-weight: 600; font-size: 15px;">
+    <span class="loading-icon"></span>
+    Menyimpan Bukti...
+  </span>
+</div>
+
+<div id="status-success" style="display: none; text-align: center; padding: 14px; background: #d1fae5; border-radius: 8px; margin-bottom: 12px;">
+  <span style="display: flex; align-items: center; justify-content: center; color: #065f46; font-weight: 600; font-size: 15px; margin-bottom: 4px;">
+    <span class="success-icon">✓</span>
+    Berhasil! Membuka WhatsApp...
+  </span>
+  <p style="color: #047857; font-size: 13px; margin: 0;">Bukti Terkirim ke Admin!<br>Mengalihkan ke WhatsApp untuk mengambil produk...</p>
+</div>
+
+    
+    <button id="confirm-btn" class="confirm-btn" disabled onclick="kirimKeAdmin()">
+      <i class="fa-brands fa-whatsapp"></i> Konfirmasi
+    </button>
+  </div>
+</div>
+
+
+<script>
+// === FORMAT HARGA OTOMATIS ===
+function formatHarga(angka) {
+    if (!angka && angka !== 0) return 'Rp0';
+    const hargaBersih = angka.toString().replace(/[^0-9]/g, '');
+    return 'Rp' + hargaBersih.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    const SUPABASE_URL = "https://xgyotusufomqkugayxok.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhneW90dXN1Zm9tcWt1Z2F5eG9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MTc0MjcsImV4cCI6MjEwOTM5MzQyN30.MFdTicnvGbANszdqbxzkiZZV6Ok0qbo02VJrf75P2ao";
+    const ADMIN_WA_NUMBER = "6288231341895";
+    
+    if (typeof supabase === 'undefined') {
+        console.error('❌ Supabase library belum dimuat!');
+        document.getElementById('products-container').innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Library gagal dimuat, cek koneksi internet lalu muat ulang</p>
+            </div>
+        `;
+        return;
+    }
+
+    
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const CATEGORY = "produk-digital";
+    let products = [];
+    let currentProduct = null;
+    let selectedProofFile = null;
+
+    const container = document.getElementById('products-container');
+    
+    try {
+        const { data, error } = await sb
+            .from('products')
+            .select('*')
+            .eq('category', CATEGORY)
+            .order('id', { ascending: true });
+        
+        if (error) throw error;
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-box-open"></i>
+                    <p>Belum ada produk</p>
+                </div>
+            `;
+            return;
+        }
+        
+        products = data;
+        renderProducts();
+        
+    } catch (err) {
+        console.error('Error:', err);
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Gagal memuat produk: ${err.message}</p>
+            </div>
+        `;
+    }
+
+// Animasi sebelum pindah halaman
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        
+        // Hanya untuk link internal, bukan link WA/eksternal
+        if (href && !href.startsWith('http') && !href.startsWith('https://wa.me')) {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease, transform 1.0s ease';
+            document.body.style.transform = 'translateY(-8px)';
+            
+            setTimeout(() => {
+                window.location.href = href;
+            }, 300);
+        }
+    });
+});
+
+    function renderProducts() {
+        container.innerHTML = products.map(p => `
+            <div class="product-card" onclick="openDetailModal(${p.id})">
+                <div class="product-image-wrapper">
+                    <img src="${p.image_url}" alt="${p.name}" class="product-img" loading="lazy">
+                </div>
+                <h3 class="product-name">${p.name}</h3>
+                <p class="product-price">${formatHarga(p.price)}</p>
+                <button class="detail-btn">Lihat Detail →</button>
+            </div>
+        `).join('');
+    }
+
+    window.openDetailModal = function(productId) {
+        currentProduct = products.find(p => p.id === productId);
+        if (!currentProduct) {
+            alert('Produk tidak ditemukan!');
+            return;
+        }
+        document.getElementById('detail-img-full').src = currentProduct.image_url;
+        document.getElementById('detail-name-full').textContent = currentProduct.name;
+        document.getElementById('detail-price-full').textContent = formatHarga(currentProduct.price);
+        document.getElementById('detail-desc-full').textContent = currentProduct.description || 'Deskripsi belum tersedia.';
+        document.getElementById('detail-page').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeDetailModal = function() {
+    document.getElementById('detail-page').classList.remove('active');
+    document.body.style.overflow = 'auto';
+    // ✅ JANGAN hapus currentProduct disini
+};
+
+
+    window.openPaymentModal = function() {
+    // ✅ CEK DULU: Kalau belum ada produk, berhenti disini
+    if (!currentProduct) {
+        alert('Pilih produk terlebih dahulu!');
+        return;
+    }
+
+    // ✅ Simpan data produk ke variabel sementara
+    const namaProduk = currentProduct.name;
+
+    // ✅ Tutup modal detail
+    closeDetailModal();
+
+    // ✅ Buka modal pembayaran & isi nama produk saja
+    document.getElementById('sel-product-name').textContent = currentProduct.name;
+document.getElementById('sel-product-price').textContent = ` ${formatHarga(currentProduct.price)}`;
+    document.getElementById('payment-modal').classList.remove('hidden');
+    document.getElementById('sel-product-name').textContent = namaProduk;
+
+    selectedProofFile = null;
+    document.getElementById('proof-preview').style.display = 'none';
+    document.getElementById('upload-click').classList.remove('has-image');
+    document.getElementById('confirm-btn').disabled = true;
+    document.getElementById('proof-input').value = '';
+};
+
+
+    window.closePaymentModal = function() {
+    document.getElementById('payment-modal').classList.add('hidden');
+    
+    // ✅ Reset semua dengan lengkap
+    selectedProofFile = null;
+    
+    // Reset input file
+    const inputFile = document.getElementById('proof-input');
+    if (inputFile) inputFile.value = '';
+    
+    // Reset preview gambar
+    const previewImg = document.getElementById('proof-preview');
+    if (previewImg) {
+        previewImg.style.display = 'none';
+        previewImg.src = '';
+    }
+    
+    // Reset area upload
+    const uploadArea = document.getElementById('upload-click');
+    if (uploadArea) uploadArea.classList.remove('has-image');
+    
+    // Reset teks status
+    const fileStatusEl = document.getElementById('no-file-text');
+    if (fileStatusEl) fileStatusEl.textContent = 'Tidak ada file yang dipilih';
+    
+    // Reset placeholder teks
+    const placeholderText = document.getElementById('placeholder-text');
+    if (placeholderText) placeholderText.style.display = 'flex';
+    
+    // Disable tombol konfirmasi
+    const confirmBtn = document.getElementById('confirm-btn');
+    if (confirmBtn) confirmBtn.disabled = true;
+};
+
+
+    window.previewImage = function(event) {
+    const file = event.target.files[0];
+    const placeholderText = document.getElementById('placeholder-text');
+    const previewImg = document.getElementById('proof-preview');
+    const fileStatusEl = document.getElementById('no-file-text'); // ✅ ID yang benar
+    const confirmBtn = document.getElementById('confirm-btn');
+
+    if (!file) {
+        selectedProofFile = null;
+        if (placeholderText) placeholderText.style.display = 'flex';
+        if (previewImg) previewImg.style.display = 'none';
+        if (fileStatusEl) fileStatusEl.textContent = 'Tidak ada file yang dipilih';
+        if (confirmBtn) confirmBtn.disabled = true;
+        return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+        alert('Harap pilih file gambar!');
+        return;
+    }
+
+    selectedProofFile = file;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        if (previewImg) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+        }
+        if (placeholderText) placeholderText.style.display = 'none';
+        if (fileStatusEl) fileStatusEl.textContent = '✅ File terpilih: ' + file.name;
+        if (confirmBtn) confirmBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+};
+
+// === ALERT KUSTOM ===
+function customAlert(pesan) {
+    // Cek apakah elemen sudah ada
+    let alertBox = document.getElementById('custom-alert-box');
+    
+    if (!alertBox) {
+        // Buat elemen alert kalau belum ada
+        alertBox = document.createElement('div');
+        alertBox.id = 'custom-alert-box';
+        alertBox.style.cssText = `
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        `;
+        
+        alertBox.innerHTML = `
+            <div style="background: white; padding: 24px 32px; border-radius: 12px; max-width: 80%; text-align: center;">
+                <p id="custom-alert-text" style="font-size: 15px; color: #333; margin-bottom: 16px;"></p>
+                <button onclick="document.getElementById('custom-alert-box').remove()" 
+                    style="background: #3b82f6; color: white; border: none; padding: 8px 24px; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                    OK
+                </button>
+            </div>
+        `;
+        document.body.appendChild(alertBox);
+    }
+    
+    document.getElementById('custom-alert-text').textContent = pesan;
+}
+
+
+    window.kirimKeAdmin = async function() {
+    const inputFile = document.getElementById('proof-input');
+    const adaFile = selectedProofFile || (inputFile && inputFile.files && inputFile.files[0]);
+    
+    if (!adaFile) {
+        customAlert('Silakan pilih bukti pembayaran terlebih dahulu!');
+        return;
+    }
+    
+    if (!currentProduct) {
+        customAlert('Pilih produk terlebih dahulu!');
+        return;
+    }
+    
+    // Tampilkan loading
+    document.getElementById('confirm-btn').style.display = 'none';
+    document.getElementById('status-loading').style.display = 'block';
+    document.getElementById('status-success').style.display = 'none';
+    
+    try {
+        let proofUrl = '';
+        
+        // Upload foto ke Supabase
+        if (selectedProofFile) {
+            const fileName = 'bukti-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9) + '.jpg';
+            const { data: uploadData, error: uploadError } = await sb.storage
+                .from('bukti-transfer')
+                .upload(fileName, selectedProofFile);
+            
+            if (uploadError) throw uploadError;
+            
+            const { data: { publicUrl } } = sb.storage
+                .from('bukti-transfer')
+                .getPublicUrl(fileName);
+            
+            proofUrl = publicUrl;
+        }
+        
+        // ✅ Otomatis isi nama = "Customer Digital"
+        const username = "Customer Digital";
+        
+        // Waktu sekarang
+        const now = new Date();
+        const tanggal = now.getDate().toString().padStart(2, '0');
+        const bulan = (now.getMonth() + 1).toString().padStart(2, '0');
+        const tahun = now.getFullYear();
+        const jam = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        
+        // Simpan ke database
+        const { error: insertError } = await sb
+            .from('transaksi')
+            .insert([{
+                username: username,
+                produk: currentProduct.name,
+                harga: currentProduct.price,
+                bukti_url: proofUrl,
+                tanggal: tanggal,
+                bulan: bulan,
+                tahun: tahun,
+                jam: jam,
+                status: 'baru'
+            }]);
+        
+        if (insertError) throw insertError;
+        
+        // Kirim WhatsApp ke admin
+        const pesan = `Halo Admin Tanz, Saya Sudah Bayar Untuk Produk Digital:
+
+📦Produk: ${currentProduct.name}
+💰 Harga: Rp${Number(currentProduct.price).toLocaleString('id-ID')}
+
+Bukti Transfer Sudah Saya Upload Di Web, Mohon Konfirmasi Dan Kirimkan Produk Nya, Trimakasi!`;
+
+        const waLink = `https://wa.me/6288231341895?text=${encodeURIComponent(pesan)}`;
+        window.open(waLink, '_blank');
+        
+        // Berhasil
+        document.getElementById('status-loading').style.display = 'none';
+        document.getElementById('status-success').style.display = 'block';
+        
+        // Reset form setelah 2 detik
+        setTimeout(() => {
+            closePaymentModal();
+        }, 2000);
+        
+    } catch (err) {
+        console.error(err);
+        customAlert('Terjadi kesalahan, coba lagi nanti!');
+        document.getElementById('confirm-btn').style.display = 'block';
+        document.getElementById('status-loading').style.display = 'none';
+    }
+};
+
+
+// ✅ FUNGSI UTAMA ALERT KUSTOM — GUNAKAN DI SEMUA HALAMAN
+ function showAlert(pesan, tipe = 'info') {
+     const overlay = document.getElementById('customAlertOverlay');
+     const box = document.getElementById('customAlertBox');
+     const msgEl = document.getElementById('customAlertMessage');
+     const iconEl = document.getElementById('customAlertIcon');
+     
+     if (!overlay || !box || !msgEl) return;
+     
+     // Reset kelas
+     box.classList.remove('success', 'error', 'warning');
+     
+     // Set tipe dan ikon
+     let iconHTML = '<i class="fa-solid fa-circle-info"></i>';
+     if (tipe === 'success') {
+         box.classList.add('success');
+         iconHTML = '<i class="fa-solid fa-circle-check"></i>';
+     } else if (tipe === 'error') {
+         box.classList.add('error');
+         iconHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+     } else if (tipe === 'warning') {
+         box.classList.add('warning');
+         iconHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+     }
+     iconEl.innerHTML = iconHTML;
+     
+     // Tampilkan pesan
+     msgEl.innerHTML = pesan;
+     
+     // Buka alert
+     overlay.classList.add('active');
+     document.body.style.overflow = 'hidden';
+ }
+ function closeCustomAlert() {
+     const overlay = document.getElementById('customAlertOverlay');
+     if (overlay) {
+         overlay.classList.remove('active');
+         document.body.style.overflow = '';
+     }
+ }
+ function closeCustomAlertOnOverlay(event) {
+     if (event.target.id === 'customAlertOverlay') {
+         closeCustomAlert();
+     }
+ }
+ // ✅ GANTI OTOMATIS alert() BAWAHAN JADI KUSTOM
+ window.alert = function(pesan) {
+     showAlert(pesan);
+ };
+});
+</script>
+</body>
+</html>
+

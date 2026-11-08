@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nokos - TanzShop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #e6f2ff; min-height: 100vh; padding-bottom: 100px; }
+        
+        header { 
+            background: linear-gradient(135deg, #0099ff, #00ccff); 
+            padding: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 153, 255, 0.25); 
+            position: sticky; 
+            top: 0; 
+            z-index: 50; 
+        }
+        .back-btn { text-decoration: none; color: white; font-size: 20px; }
+        header h1 { font-size: 18px; font-weight: 700; color: white; }
+        
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .page-title h2 {
+            font-size: 22px;
+            color: #004777;
+            font-weight: 800;
+        }
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        
+        /* ✅ GRID NOKOS — 2 Kolom */
+        .nokos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+        .nokos-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .nokos-card:hover {
+            transform: translateY(-3px);
+            border-color: #0099ff;
+        }
+        .nokos-card i {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .nokos-card .wa i { color: #25D366; }
+        .nokos-card .shopee i { color: #FF5E2A; }
+        .nokos-card .tiktok i { color: #000000; }
+        .nokos-card .fb i { color: #1877F2; }
+        .nokos-card .ig i { color: #E4405F; }
+        .nokos-card .tele i { color: #0088CC; }
+        .nokos-card .dana i { color: #008AE6; }
+        .nokos-card .google i { color: #4285F4; }
+        .nokos-card .name {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .nokos-card .region {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .nokos-card .price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0099ff;
+        }
+        
+        /* ✅ Tombol Hubungi Admin */
+        .contact-admin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+        }
+        .contact-admin-btn i { font-size: 18px; }
+        
+
+
+        
+        .hidden { display: none !important; }
+        
+        
+        header {
+   background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+   padding: 20px;
+   position: relative;
+   border-radius: 0 0 16px 16px;
+ }
+ .back-btn {
+   color: white;
+   font-size: 18px;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   margin-bottom: 12px;
+ }
+ .header-subtitle {
+   color: rgba(255, 255, 255, 0.85);
+   font-size: 13px;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   margin-bottom: 4px;
+ }
+ header h1 {
+   color: white;
+   font-size: 26px;
+   font-weight: 900;
+   margin: 0 0 6px 0;
+ }
+ .header-desc {
+   color: rgba(255, 255, 255, 0.8);
+   font-size: 14px;
+   margin: 0;
+ }
+
+ 
+ /* ===== ANIMASI SEMUA TOMBOL ===== */
+button,
+.btn,
+a.button,
+[type="button"],
+[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease !important;
+    transform-origin: center;
+}
+
+/* Hover: sedikit naik & lebih terang */
+button:hover,
+.btn:hover,
+a.button:hover,
+[type="button"]:hover,
+[type="submit"]:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Klik: ditekan */
+button:active,
+.btn:active,
+a.button:active,
+[type="button"]:active,
+[type="submit"]:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Efek gelombang saat diklik */
+button::after,
+.btn::after,
+a.button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+button:active::after,
+.btn:active::after,
+a.button:active::after {
+    animation: ripple 0.4s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0.6;
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+    }
+}
+
+/* ✅ MODAL PEMBAYARAN */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: 16px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+.close-btn:hover { color: #ef4444; }
+
+.payment-title {
+    text-align: center;
+    font-size: 18px;
+    color: #1e40af;
+    margin-bottom: 4px;
+}
+
+.payment-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.product-info-box {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.label-produk {
+    font-size: 13px;
+    color: #3b82f6;
+    margin-bottom: 4px;
+}
+
+.nama-produk {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.harga-produk {
+    font-size: 18px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.qris-img {
+    width: 100%;
+    max-width: 220px;
+    display: block;
+    margin: 0 auto 8px auto;
+    border-radius: 8px;
+}
+
+.qris-label {
+    text-align: center;
+    font-size: 14px;
+    color: #4b5563;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.instruksi-box {
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.instruksi-box p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #374151;
+}
+
+.upload-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 10px;
+}
+
+.upload-area {
+    border: 2px dashed #94a3b8;
+    border-radius: 8px;
+    padding: 30px 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: #f8fafc;
+}
+.upload-area:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+.upload-area.has-image {
+    border-style: solid;
+    border-color: #22c55e;
+    padding: 10px;
+}
+
+.placeholder-text i {
+    font-size: 36px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+}
+
+.placeholder-text p {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.upload-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 6px;
+    display: none;
+}
+
+.file-status {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.loading-icon {
+    margin-right: 8px;
+}
+
+.success-icon {
+    margin-right: 6px;
+}
+
+.confirm-btn {
+    width: 100%;
+    padding: 14px;
+    background: #25d366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 8px;
+}
+.confirm-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+.confirm-btn:not(:disabled):hover {
+    background: #12b858;
+}
+.confirm-btn i {
+    margin-right: 8px;
+}
+
+ /* Animasi Fade In Halaman */
+body {
+    opacity: 0;
+    animation: pageFadeIn 0.5s ease forwards;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cegah pemilihan teks */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Cegah gambar diseret/diklik */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Sembunyikan tampilan URL di pojok kiri bawah */
+a {
+  text-decoration: none;
+}
+
+/* Opsional: Hilangkan efek hover jika perlu */
+a:hover {
+  color: inherit;
+}
+
+/* Hilangkan sorotan biru saat diklik/ditekan */
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* Opsional: cegah teks terseleksi saat diklik */
+button, a {
+  user-select: none;
+}
+
+    </style>
+</head>
+<body>
+
+<header>
+   <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+   <div class="header-content">
+  <p style="font-size: 12px; font-weight: 800; color: #3b82f6; background: #dbeafe; padding: 4px 12px; border-radius: 9999px; display: inline-block; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px;">
+        NOKOS
+    </p>
+     <h1>NOMOR KOSONG</h1>
+     <p class="header-desc">Pilih Layanan Nomor Kosong Yang Anda Butuhkan.</p>
+   </div>
+ </header>
+
+<div class="container">
+    <div class="page-title">
+        <h2>Pilih Layanan Nokos</h2>
+        <p>Klik untuk memesan</p>
+    </div>
+    
+<!-- ✅ DAFTAR NOKOS -->
+<div class="nokos-grid">
+    <div class="nokos-card" onclick="openNokosPayment('WhatsApp', 'Indonesia', 'Rp5.000')">
+        <span class="wa"><i class="fa-brands fa-whatsapp"></i></span>
+        <span class="name">WhatsApp</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp5.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Shopee', 'Indonesia', 'Rp2.000')">
+        <span class="shopee"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="name">Shopee</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp2.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Tiktok', 'Indonesia', 'Rp2.000')">
+        <span class="tiktok"><i class="fa-brands fa-tiktok"></i></span>
+        <span class="name">Tiktok</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp2.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Facebook', 'Indonesia', 'Rp2.000')">
+        <span class="fb"><i class="fa-brands fa-facebook-f"></i></span>
+        <span class="name">Facebook</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp2.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Instagram', 'Indonesia', 'Rp2.000')">
+        <span class="ig"><i class="fa-brands fa-instagram"></i></span>
+        <span class="name">Instagram</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp2.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Telegram', 'Indonesia', 'Rp2.000')">
+        <span class="tele"><i class="fa-brands fa-telegram"></i></span>
+        <span class="name">Telegram</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp2.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Dana', 'Indonesia', 'Rp2.000')">
+        <span class="dana"><i class="fa-solid fa-wallet"></i></span>
+        <span class="name">Dana</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp2.000</span>
+    </div>
+
+    <div class="nokos-card" onclick="openNokosPayment('Google/YouTube/Gmail', 'Indonesia', 'Rp5.000')">
+        <span class="google"><i class="fa-brands fa-google"></i></span>
+        <span class="name">Google/YouTube/Gmail</span>
+        <span class="region">Indonesia</span>
+        <span class="price">Rp5.000</span>
+    </div>
+</div>
+
+    
+    <!-- ✅ Hubungi Admin -->
+    <a href="https://wa.me/6288231341895" target="_blank" class="contact-admin-btn">
+        <i class="fa-solid fa-headset"></i>
+        Mau Nokos Sosmed Lain? Hubungi Admin (TanzShop)
+    </a>
+</div>
+
+<!-- ✅ MODAL PEMBAYARAN QRIS -->
+<div id="payment-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closePaymentModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        
+        <h2 class="payment-title">Scan QRIS Pembayaran</h2>
+        <p class="payment-subtitle">Selesaikan pembayaran nomor kosong kamu</p>
+
+        <!-- Info Produk -->
+        <div class="product-info-box">
+            <p class="label-produk">Yang Anda Beli:</p>
+            <h3 id="sel-product-name" class="nama-produk">Nama Produk</h3>
+            <p id="sel-product-price" class="harga-produk">Rp 0</p>
+        </div>
+
+        <!-- QRIS -->
+        <img src="qris.jpg" alt="QRIS Pembayaran" class="qris-img">
+        <p class="qris-label">QRIS — ALL PAYMENT</p>
+
+        <!-- Instruksi -->
+        <div class="instruksi-box">
+            <p><b>1.</b> Scan kode QR di atas sesuai nominal total</p>
+            <p><b>2.</b> Upload foto bukti pembayaran di bawah ini</p>
+            <p><b>3.</b> Klik tombol Konfirmasi & Kirim ke Admin</p>
+        </div>
+
+        <!-- Upload Bukti -->
+        <p class="upload-title">Upload Bukti Transfer <span style="color:red">(Wajib)</span></p>
+        
+        <div class="upload-area" id="upload-click" onclick="document.getElementById('proof-input').click()">
+            <div id="placeholder-text" class="placeholder-text">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p>Klik untuk pilih gambar</p>
+            </div>
+            <img id="proof-preview" class="upload-preview" alt="Preview Bukti">
+        </div>
+        
+        <p id="no-file-text" class="file-status">Tidak ada file yang dipilih</p>
+        <input type="file" id="proof-input" accept="image/*" style="display: none;" onchange="previewImage(event)">
+
+        <!-- Status Loading & Sukses -->
+        <div id="status-loading" style="display: none; text-align: center; padding: 16px; background: #dbeafe; border-radius: 8px; margin: 12px 0;">
+            <span style="display: flex; align-items: center; justify-content: center; color: #1e40af; font-weight: 600; font-size: 15px;">
+                <span class="loading-icon"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                Menyimpan Bukti...
+            </span>
+        </div>
+
+        <div id="status-success" style="display: none; text-align: center; padding: 16px; background: #d1fae5; border-radius: 8px; margin: 12px 0;">
+            <span style="display: flex; align-items: center; justify-content: center; color: #065f46; font-weight: 600; font-size: 15px; margin-bottom: 4px;">
+                <span class="success-icon"><i class="fa-solid fa-circle-check"></i></span>
+                Berhasil!
+            </span>
+            <p style="color: #047857; font-size: 13px;">Bukti Terkirim ke Admin!<br>Mengalihkan ke WhatsApp...</p>
+        </div>
+
+        <!-- Tombol Konfirmasi -->
+        <button id="confirm-btn" class="confirm-btn" disabled onclick="kirimKeAdmin()">
+            <i class="fa-brands fa-whatsapp"></i> Konfirmasi & Chat Admin
+        </button>
+    </div>
+</div>
+
+
+
+<!-- ✅ ALERT KUSTOM UTAMA -->
+<style>
+.custom-alert-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+    padding: 20px;
+}
+.custom-alert-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.custom-alert-box {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transform: scale(0.9);
+    transition: transform 0.25s ease;
+}
+.custom-alert-overlay.active .custom-alert-box {
+    transform: scale(1);
+}
+.custom-alert-icon {
+    font-size: 48px;
+    color: #0099ff;
+    margin-bottom: 16px;
+}
+.custom-alert-box.success .custom-alert-icon { color: #22c55e; }
+.custom-alert-box.error .custom-alert-icon { color: #ef4444; }
+.custom-alert-box.warning .custom-alert-icon { color: #f59e0b; }
+.custom-alert-text {
+    font-size: 15px;
+    color: #374151;
+    line-height: 1.6;
+    margin-bottom: 22px;
+    font-weight: 500;
+}
+.custom-alert-btn {
+    background: linear-gradient(135deg, #0099ff, #00ccff);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.custom-alert-btn:active { transform: scale(0.96); }
+.custom-alert-box.success .custom-alert-btn { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.custom-alert-box.error .custom-alert-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+
+</style>
+
+<div id="customAlertOverlay" class="custom-alert-overlay" onclick="closeCustomAlertOnOverlay(event)">
+    <div id="customAlertBox" class="custom-alert-box" onclick="event.stopPropagation()">
+        <div id="customAlertIcon" class="custom-alert-icon"><i class="fa-solid fa-circle-info"></i></div>
+        <p id="customAlertMessage" class="custom-alert-text"></p>
+        <button class="custom-alert-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+</div>
+
+<script>
+// === KONFIGURASI SUPABASE ===
+ const SUPABASE_URL = "https://xgyotusufomqkugayxok.supabase.co";
+ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhneW90dXN1Zm9tcWt1Z2F5eG9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MTc0MjcsImV4cCI6MjEwOTM5MzQyN30.MFdTicnvGbANszdqbxzkiZZV6Ok0qbo02VJrf75P2ao";
+ // Inisialisasi Supabase Client
+ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+ console.log('✅ Supabase terhubung berhasil!');
+
+// ✅ ALERT KUSTOM
+function showAlert(pesan, tipe = 'info') {
+    const overlay = document.getElementById('customAlertOverlay');
+    const box = document.getElementById('customAlertBox');
+    const msgEl = document.getElementById('customAlertMessage');
+    const iconEl = document.getElementById('customAlertIcon');
+    
+    if (!overlay || !box || !msgEl) return;
+    
+    box.classList.remove('success', 'error', 'warning');
+    let iconHTML = '<i class="fa-solid fa-circle-info"></i>';
+    if (tipe === 'success') {
+        box.classList.add('success');
+        iconHTML = '<i class="fa-solid fa-circle-check"></i>';
+    } else if (tipe === 'error') {
+        box.classList.add('error');
+        iconHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+    } else if (tipe === 'warning') {
+        box.classList.add('warning');
+        iconHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+    }
+    iconEl.innerHTML = iconHTML;
+    msgEl.innerHTML = pesan;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeCustomAlert() {
+    const overlay = document.getElementById('customAlertOverlay');
+    if (overlay) { overlay.classList.remove('active'); document.body.style.overflow = ''; }
+}
+function closeCustomAlertOnOverlay(e) { if (e.target.id === 'customAlertOverlay') closeCustomAlert(); }
+window.alert = function(pesan) { showAlert(pesan); };
+
+// ✅ LOGIKA NOKOS
+let selectedProofFile = null;
+const ADMIN_WA_NUMBER = "6288231341895";
+
+
+//modal pembayaran
+let selectedNokos = null;
+
+// ✅ Buka Modal Pembayaran Nokos
+function openNokosPayment(type, region, price) {
+    selectedNokos = { type, region, price };
+
+    const nameEl = document.getElementById('sel-product-name');
+    const priceEl = document.getElementById('sel-product-price');
+    
+    if (nameEl) nameEl.textContent = `${type} - ${region}`;
+    if (priceEl) priceEl.textContent = price;
+
+    const modal = document.getElementById('payment-modal');
+    if (modal) modal.classList.remove('hidden');
+
+    resetModalState();
+}
+
+// ✅ Tutup Modal
+function closePaymentModal() {
+    const modal = document.getElementById('payment-modal');
+    if (modal) modal.classList.add('hidden');
+    
+    selectedNokos = null;
+    selectedProofFile = null;
+    resetModalState();
+}
+
+// ✅ Reset Semua Elemen Modal
+function resetModalState() {
+    selectedProofFile = null;
+    
+    const previewImg = document.getElementById('proof-preview');
+    if (previewImg) {
+        previewImg.style.display = 'none';
+        previewImg.src = '';
+    }
+    
+    const uploadArea = document.getElementById('upload-click');
+    if (uploadArea) uploadArea.classList.remove('has-image');
+    
+    const placeholderText = document.getElementById('placeholder-text');
+    if (placeholderText) placeholderText.style.display = 'block';
+    
+    const fileStatusEl = document.getElementById('no-file-text');
+    if (fileStatusEl) fileStatusEl.textContent = 'Tidak ada file yang dipilih';
+    
+    const confirmBtn = document.getElementById('confirm-btn');
+    if (confirmBtn) confirmBtn.disabled = true;
+    
+    const proofInput = document.getElementById('proof-input');
+    if (proofInput) proofInput.value = '';
+    
+    const statusLoading = document.getElementById('status-loading');
+    if (statusLoading) statusLoading.style.display = 'none';
+    
+    const statusSuccess = document.getElementById('status-success');
+    if (statusSuccess) statusSuccess.style.display = 'none';
+}
+
+// ✅ Pratinjau Gambar Bukti
+function previewImage(event) {
+    const file = event.target.files[0];
+    const placeholderText = document.getElementById('placeholder-text');
+    const previewImg = document.getElementById('proof-preview');
+    const fileStatusEl = document.getElementById('no-file-text');
+    const confirmBtn = document.getElementById('confirm-btn');
+    const uploadArea = document.getElementById('upload-click');
+
+    if (!file) {
+        selectedProofFile = null;
+        if (placeholderText) placeholderText.style.display = 'block';
+        if (previewImg) previewImg.style.display = 'none';
+        if (uploadArea) uploadArea.classList.remove('has-image');
+        if (fileStatusEl) fileStatusEl.textContent = 'Tidak ada file yang dipilih';
+        if (confirmBtn) confirmBtn.disabled = true;
+        return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+        alert('Harap pilih file gambar saja!');
+        return;
+    }
+
+    selectedProofFile = file;
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        if (previewImg) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+        }
+        if (placeholderText) placeholderText.style.display = 'none';
+        if (uploadArea) uploadArea.classList.add('has-image');
+        if (fileStatusEl) fileStatusEl.textContent = 'File terpilih: ' + file.name;
+        if (confirmBtn) confirmBtn.disabled = false;
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+// ✅ Kirim ke Admin & Simpan ke Supabase — DIPERBAIKI
+async function kirimKeAdmin() {
+    if (!selectedNokos || !selectedProofFile) {
+        alert('Silakan pilih bukti pembayaran terlebih dahulu!');
+        return;
+    }
+
+    const statusLoading = document.getElementById('status-loading');
+    const statusSuccess = document.getElementById('status-success');
+    const confirmBtn = document.getElementById('confirm-btn');
+    
+    if (statusLoading) statusLoading.style.display = 'block';
+    if (statusSuccess) statusSuccess.style.display = 'none';
+    if (confirmBtn) confirmBtn.disabled = true;
+
+    console.log('📤 Mulai menyimpan transaksi...');
+
+    try {
+        let buktiUrl = '';
+        
+        // Cek apakah Supabase terhubung
+        if (typeof sb === 'undefined') {
+            console.error('❌ Supabase tidak terhubung!');
+            alert('Error: Supabase tidak terhubung. Cek konfigurasi di bagian atas file.');
+            if (statusLoading) statusLoading.style.display = 'none';
+            if (confirmBtn) confirmBtn.disabled = false;
+            return;
+        }
+        console.log('✅ Supabase terhubung');
+
+        // 1. Upload gambar ke Storage
+        if (selectedProofFile) {
+            const fileName = 'bukti-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9) + '.jpg';
+            console.log('📤 Upload file:', fileName);
+            
+            const { data: uploadData, error: uploadError } = await sb.storage
+                .from('bukti-transfer')
+                .upload(fileName, selectedProofFile);
+            
+            if (uploadError) {
+                console.warn('⚠️ Upload gambar gagal:', uploadError);
+            } else {
+                const { data: { publicUrl } } = sb.storage
+                    .from('bukti-transfer')
+                    .getPublicUrl(fileName);
+                buktiUrl = publicUrl;
+                console.log('✅ Gambar terupload:', buktiUrl);
+            }
+        }
+
+        // 2. Siapkan data
+        const now = new Date();
+        const tahun = now.getFullYear().toString();
+        const bulan = String(now.getMonth() + 1).padStart(2, '0');
+        const tanggal = String(now.getDate()).padStart(2, '0');
+        const jam = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        const dataTransaksi = {
+            username: 'Pengguna',
+            produk: `${selectedNokos.type} - ${selectedNokos.region}`,
+            harga: selectedNokos.price,
+            bukti_url: buktiUrl,
+            status: 'menunggu',
+            tahun: tahun,
+            bulan: bulan,
+            tanggal: tanggal,
+            jam: jam
+        };
+        console.log('📝 Data yang akan disimpan:', dataTransaksi);
+
+        // 3. Simpan ke tabel transaksi
+        console.log('💾 Menyimpan ke tabel transaksi...');
+        const { data, error } = await sb
+            .from('transaksi')
+            .insert([dataTransaksi])
+            .select();
+
+        if (error) {
+            console.error('❌ Error simpan ke database:', error);
+            alert('Gagal menyimpan: ' + error.message + '\nKode: ' + error.code);
+            if (statusLoading) statusLoading.style.display = 'none';
+            if (confirmBtn) confirmBtn.disabled = false;
+            return;
+        }
+
+        console.log('✅ BERHASIL! Data tersimpan:', data);
+
+        // 4. Tampilkan sukses & kirim WA
+        if (statusLoading) statusLoading.style.display = 'none';
+        if (statusSuccess) statusSuccess.style.display = 'block';
+
+        const pesanWA = `Halo Admin Tanz, Saya Sudah Bayar Untuk Nokos:
+        
+📞Layanan: ${selectedNokos.type}
+🇮🇩Negara: ${selectedNokos.region}
+💰Total: ${selectedNokos.price}
+
+Bukti Transfer Sudah Saya Upload Di Web, Mohon Verifikasi Dan Kirimkan Produk Nya, Trimakasi!`;
+
+        setTimeout(() => {
+            window.open(`https://wa.me/6288231341895?text=${encodeURIComponent(pesanWA)}`, '_blank');
+            closePaymentModal();
+        }, 1500);
+
+    } catch (error) {
+        console.error('❌ Error tidak terduga:', error);
+        if (statusLoading) statusLoading.style.display = 'none';
+        alert('Error: ' + error.message);
+        if (confirmBtn) confirmBtn.disabled = false;
+    }
+}
+
+</script>
+</body>
+</html>

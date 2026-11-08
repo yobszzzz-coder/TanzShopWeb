@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JASWEB - TANZSHOP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    
+<style>
+     /* Animasi Fade In Halaman */
+body {
+    opacity: 0;
+    animation: pageFadeIn 1.0s ease forwards;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* ===== ANIMASI SEMUA TOMBOL ===== */
+button,
+.btn,
+a.button,
+[type="button"],
+[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease !important;
+    transform-origin: center;
+}
+
+/* Hover: sedikit naik & lebih terang */
+button:hover,
+.btn:hover,
+a.button:hover,
+[type="button"]:hover,
+[type="submit"]:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Klik: ditekan */
+button:active,
+.btn:active,
+a.button:active,
+[type="button"]:active,
+[type="submit"]:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Efek gelombang saat diklik */
+button::after,
+.btn::after,
+a.button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+button:active::after,
+.btn:active::after,
+a.button:active::after {
+    animation: ripple 0.4s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 0.6;
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+    }
+}
+
+/* Cegah pemilihan teks */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Cegah gambar diseret/diklik */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+/* Sembunyikan tampilan URL di pojok kiri bawah */
+a {
+  text-decoration: none;
+}
+
+/* Opsional: Hilangkan efek hover jika perlu */
+a:hover {
+  color: inherit;
+}
+
+/* Hilangkan sorotan biru saat diklik/ditekan */
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* Opsional: cegah teks terseleksi saat diklik */
+button, a {
+  user-select: none;
+}
+
+</style>
+</head>
+<body>
+
+<header class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 text-blue-600">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span class="text-sm font-bold">Kembali</span>
+        </a>
+        <h1 class="font-extrabold text-slate-800">JASWEB</h1>
+        <div></div>
+    </div>
+</header>
+
+<main class="max-w-md mx-auto px-4 py-6">
+    <div class="space-y-6">
+        <div class="flex items-center justify-between border-b border-blue-200 pb-3">
+            <div>
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-code text-blue-600"></i> JASA BUAT WEBSITE
+                </h3>
+                <p class="text-xs text-slate-500">Sesuai Keinginan & Ekspektasi Anda</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-blue-200 p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-blue-100 pb-3">
+                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                    Pengerjaan Sekitar 1-2 Hari
+                </span>
+                <span class="text-sm font-black text-slate-800">Rp25.000</span>
+            </div>
+            <ul class="text-sm text-slate-700 space-y-2.5">
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Hasil Website Keren Dan Bagus</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Semua Isi Website Berfungsi</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Harga Terjangkau Dan Murah</li>
+            </ul>
+            <a href="https://wa.me/6288231341895?text=Halo%20Admin%20Tanz%20Shop,%20saya%20mau%20pesan%20Jasa%20Buat%20Website" target="_blank" 
+               class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 rounded-xl text-sm flex items-center justify-center gap-2 transition-all">
+                <i class="fa-brands fa-whatsapp text-lg"></i> PESAN JASWEB VIA WA (TanzShop)
+            </a>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    // Animasi sebelum pindah halaman
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        
+        // Hanya untuk link internal, bukan link WA/eksternal
+        if (href && !href.startsWith('http') && !href.startsWith('https://wa.me')) {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease, transform 1.0s ease';
+            document.body.style.transform = 'translateY(-8px)';
+            
+            setTimeout(() => {
+                window.location.href = href;
+            }, 300);
+        }
+    });
+});
+
+</script>
+</body>
+</html>

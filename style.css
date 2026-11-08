@@ -1,0 +1,173 @@
+:root {
+    --biru-muda: #44b7ff;
+    --biru-terang: #66c9ff;
+    --biru-sangat-muda: #e0f2ff;
+    --biru-latar: #f0f8ff;
+    --putih: #ffffff;
+    --teks-gelap: #1e293b;
+    --teks-abu: #64748b;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--biru-latar);
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-bottom: 1px solid var(--biru-sangat-muda) !important;
+}
+
+/* Logo Bulat */
+.w-10.h-10.rounded-full {
+    background: linear-gradient(135deg, var(--biru-muda), var(--biru-terang)) !important;
+}
+
+/* Tombol Menu */
+.w-10.h-10.rounded-xl {
+    background-color: var(--biru-sangat-muda) !important;
+}
+.w-10.h-10.rounded-xl i {
+    color: var(--biru-muda) !important;
+}
+
+/* Tombol Menu Kaca */
+.glass-menu-btn {
+    background: var(--putih);
+    border: 2px solid var(--biru-sangat-muda);
+    transition: all 0.3s ease;
+}
+
+.glass-menu-btn:hover {
+    background: var(--biru-sangat-muda);
+    border-color: var(--biru-muda);
+    transform: translateY(-2px);
+}
+
+.glass-menu-btn span {
+    color: var(--teks-gelap) !important;
+}
+
+.glass-menu-btn i {
+    color: var(--biru-muda) !important;
+}
+
+/* Panel Kaca */
+.glass-panel {
+    background: var(--putih);
+    border: 2px solid var(--biru-sangat-muda);
+    transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+    border-color: var(--biru-muda);
+    box-shadow: 0 4px 12px rgba(68, 183, 255, 0.15);
+}
+
+.glass-panel span,
+.glass-panel h4,
+.glass-panel p {
+    color: var(--teks-gelap) !important;
+    border-color: var(--biru-sangat-muda) !important;
+    background: var(--biru-sangat-muda) !important;
+}
+
+.glass-panel i.fa-code {
+    color: var(--biru-muda) !important;
+    background: var(--biru-sangat-muda) !important;
+    border-color: var(--biru-muda) !important;
+}
+
+.glass-panel i.fa-chevron-right {
+    color: var(--biru-muda) !important;
+}
+
+/* Badge Kategori */
+.text-\\[10px\\].font-bold {
+    background: var(--biru-sangat-muda) !important;
+    color: var(--biru-muda) !important;
+    border-color: var(--biru-muda) !important;
+}
+
+/* Link Navigasi Samping */
+#navPanel a {
+    color: var(--teks-gelap) !important;
+}
+#navPanel a:hover {
+    background: var(--biru-sangat-muda) !important;
+    color: var(--biru-muda) !important;
+}
+#navPanel a i {
+    color: var(--biru-muda) !important;
+}
+#navPanel h2 {
+    color: var(--biru-muda) !important;
+}
+#navPanel .border-b {
+    border-color: var(--biru-sangat-muda) !important;
+}
+
+/* Tombol WA di Navigasi - Pastikan TIDAK ada color: biru disini! */
+#navPanel a.bg-green-500 {
+    background: #22c55e !important;
+    color: #ffffff !important;
+}
+#navPanel a.bg-green-500 i {
+    color: #ffffff !important; /* Ikon WA tetap putih di latar hijau */
+}
+#navPanel a.bg-green-500:hover {
+    background: #16a34a !important;
+}
+
+
+/* Footer */
+footer.border-t.border-blue-100 {
+    border-color: var(--biru-sangat-muda) !important;
+}
+footer p.text-sm.font-bold {
+    color: var(--biru-muda) !important;
+}
+footer p.text-xs {
+    color: var(--teks-abu) !important;
+}
+
+/* Tombol Biru Utama */
+.bg-blue-600 {
+    background: linear-gradient(135deg, var(--biru-muda), var(--biru-terang)) !important;
+}
+.bg-blue-600:hover {
+    background: linear-gradient(135deg, #33a8f0, var(--biru-muda)) !important;
+}
+.text-blue-500,
+.text-blue-600 {
+    color: var(--biru-muda) !important;
+}
+.border-blue-200,
+.border-blue-100 {
+    border-color: var(--biru-sangat-muda) !important;
+}
+.bg-blue-50 {
+    background-color: var(--biru-sangat-muda) !important;
+}
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+
+/*animasi text berjalan*/
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 18s linear infinite;
+        }

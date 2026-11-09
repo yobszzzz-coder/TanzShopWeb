@@ -730,6 +730,35 @@ button, a {
   user-select: none;
 }
 
+        html, body {
+  height: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  padding-bottom: 90px; /* Beri ruang kosong di bawah agar tombol tidak tertutup */
+}
+
+/* Atur container konten agar tidak melebihi layar */
+.container {
+  width: 95%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+/* Tombol — pastikan selalu terlihat */
+.buy-button, .tombol-beli {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 420px;
+  z-index: 100;
+}
+        
     </style>
 </head>
 <body>
